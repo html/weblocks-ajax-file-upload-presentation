@@ -1,4 +1,5 @@
 This is weblocks ajax file upload presentation. It just uploads file before actual submitting form using ajax.
+It was tested only with single file at a form and and single upload form.
 Here is example of using.
 
 (defun get-upload-directory ()
