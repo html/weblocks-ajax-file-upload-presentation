@@ -1,0 +1,3 @@
+[submodule "jquery-iframe-transport"]
+	path = jquery-iframe-transport
+	url = git://github.com/html/jquery-iframe-transport.git
