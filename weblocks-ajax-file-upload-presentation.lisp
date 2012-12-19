@@ -54,50 +54,50 @@
                                                   (field form-view-field) (view form-view) widget obj
                                                   &rest args &key intermediate-values &allow-other-keys)
   (if (weblocks-supports-jquery-p)
-    (with-yaclml 
-      (<:div :style "display:inline-block;" :id "ajax-upload-field"
-             (<:input :type "file" :name (attributize-name (view-field-slot-name field)))
-             (<:script :type "text/javascript"
-                       (<:as-is 
-                         (ps:ps 
-                           (with-scripts 
-                             "/pub/scripts/jquery.iframe-transport.js" 
-                             (lambda ()
-                               (let* ((form (ps:chain (j-query "#ajax-upload-field") (parents "form")))
-                                      (on-submit-code (ps:chain form (attr "onsubmit")))
-                                      (form-action (ps:chain form (attr "action"))))
-                                 ;"progressUrl" (ps:LISP (make-action-url (make-action #'upload-ajax-progress-endpoint "upload-endpoint")))
+    (progn 
+      (send-script 
+        (ps:ps 
+          (with-scripts 
+            "/pub/scripts/jquery.iframe-transport.js" 
+            (lambda ()
+              (let* ((form (ps:chain (j-query "#ajax-upload-field") (parents "form")))
+                     (on-submit-code (ps:chain form (attr "onsubmit")))
+                     (form-action (ps:chain form (attr "action"))))
+                ;"progressUrl" (ps:LISP (make-action-url (make-action #'upload-ajax-progress-endpoint "upload-endpoint")))
 
-                                 (flet ((execute-standard-form-action ()
-                                          (ps:chain form 
-                                                    (attr "target" "_self")
-                                                    (attr "onsubmit" on-submit-code)
-                                                    (attr "action" form-action)) 
-                                          (set-timeout (lambda ()
-                                                         (ps:chain form (submit))) 100)))
-                                   (ps:chain 
-                                     form
-                                     (attr "onsubmit" "")
-                                     (attr "method" "POST")
-                                     (attr "action" (ps:LISP 
-                                                      (add-get-param-to-url 
-                                                        (make-action-url 
-                                                          (make-action #'file-upload-endpoint "upload-target"))
-                                                        "pure" "true")))
-                                     (bind "submit" (lambda ()
-                                                      (if (not (string= (ps:chain (j-query "input:submit[clicked=true]") (attr "name")) "submit"))
-                                                        (execute-standard-form-action)
-                                                        (ps:chain 
-                                                          j-query
-                                                          (ajax 
-                                                            (ps:chain form (attr "action"))
-                                                            (ps:create 
-                                                              :files (ps:chain form (find ":file"))
-                                                              :iframe t
-                                                              "dataType" "json"))
-                                                          (done (lambda ()
-                                                                  (execute-standard-form-action))))) 
-                                                      ps:false))))))))))))
+                (flet ((execute-standard-form-action ()
+                         (ps:chain form 
+                                   (attr "target" "_self")
+                                   (attr "onsubmit" on-submit-code)
+                                   (attr "action" form-action)) 
+                         (set-timeout (lambda ()
+                                        (ps:chain form (submit))) 100)))
+                  (ps:chain 
+                    form
+                    (attr "onsubmit" "")
+                    (attr "method" "POST")
+                    (attr "action" (ps:LISP 
+                                     (add-get-param-to-url 
+                                       (make-action-url 
+                                         (make-action #'file-upload-endpoint "upload-target"))
+                                       "pure" "true")))
+                    (bind "submit" (lambda ()
+                                     (if (not (string= (ps:chain (j-query "input:submit[clicked=true]") (attr "name")) "submit"))
+                                       (execute-standard-form-action)
+                                       (ps:chain 
+                                         j-query
+                                         (ajax 
+                                           (ps:chain form (attr "action"))
+                                           (ps:create 
+                                             :files (ps:chain form (find ":file"))
+                                             :iframe t
+                                             "dataType" "json"))
+                                         (done (lambda ()
+                                                 (execute-standard-form-action))))) 
+                                     ps:false)))))))))
+      (with-yaclml 
+        (<:div :style "display:inline-block;" :id "ajax-upload-field"
+               (<:input :type "file" :name (attributize-name (view-field-slot-name field)))))) 
     (call-next-method)))
 
 ; Situation where upload-hook is already set not supported yet.
