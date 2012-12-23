@@ -10,8 +10,15 @@
 
 (defmethod parse-view-field-value :around ((parser ajax-file-upload-parser) value obj
                                                                             (view form-view) (field form-view-field) &rest args)
-  (let ((original-filename (third (webapp-session-value 'upload-file-post-information))))
-    (apply #'call-next-method (list* parser (list (webapp-session-value 'upload-file-pathname) original-filename) obj view field args))))
+  (let* ((original-filename (third (webapp-session-value 'upload-file-post-information)))
+         (return (multiple-value-list 
+                   (apply #'call-next-method 
+                          (list* parser (list 
+                                          (and (webapp-session-value 'upload-file-pathname) original-filename 
+                                               (list (webapp-session-value 'upload-file-pathname) original-filename)) obj view field args))))))
+    (delete-webapp-session-value 'upload-file-post-information)
+    (delete-webapp-session-value 'upload-file-pathname)
+    (apply #'values return)))
 
 (defun weblocks-supports-jquery-p ()
   t)
