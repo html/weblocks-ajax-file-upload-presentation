@@ -64,7 +64,7 @@
     (progn 
 
       (weblocks-utils:require-assets 
-        "https://raw.github.com/html/weblocks-assets/master/jquery-iframe-transport/22bf3/")
+        "https://raw.github.com/html/weblocks-assets/master/jquery-iframe-transport/74e9e/")
 
       (send-script 
         (ps:ps 
