@@ -25,3 +25,5 @@ Here is example of using.
         (push value (slot-value item 'files))))))
 
 It works with jquery-iframe-transport (http://cmlenz.github.com/jquery-iframe-transport/), for me it worked after google-chrome fix (https://github.com/html/jquery-iframe-transport/tree/google-chrome-fix)
+
+Package uses weblocks assets so all dependencies should be installed automatically.

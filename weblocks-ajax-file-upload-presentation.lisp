@@ -62,10 +62,16 @@
                                                   &rest args &key intermediate-values &allow-other-keys)
   (if (weblocks-supports-jquery-p)
     (progn 
+
+      (weblocks-utils:require-assets 
+        "https://raw.github.com/html/weblocks-assets/master/jquery-iframe-transport/22bf3/")
+
       (send-script 
         (ps:ps 
           (with-scripts 
-            "/pub/scripts/jquery.iframe-transport.js" 
+            (ps:LISP 
+              (weblocks-utils:prepend-webapp-path 
+                "/pub/scripts/jquery.iframe-transport.js"))
             (lambda ()
               (let* ((form (ps:chain (j-query "#ajax-upload-field") (parents "form")))
                      (on-submit-code (ps:chain form (attr "onsubmit")))
@@ -115,9 +121,3 @@
         (setf (webapp-session-value 'upload-file-pathname) upload-pathname)
         (setf (webapp-session-value 'upload-file-content-length) (parse-integer (hunchentoot:header-in* :content-length)))
         upload-pathname))
-
-(push (hunchentoot:create-static-file-dispatcher-and-handler 
-        "/pub/scripts/jquery.iframe-transport.js" 
-        (merge-pathnames 
-          "jquery-iframe-transport/jquery.iframe-transport.js"
-          (asdf-system-directory :weblocks-ajax-file-upload-presentation))) weblocks::*dispatch-table*)
