@@ -107,7 +107,7 @@
                                              "dataType" "json"))
                                          (done (lambda ()
                                                  (execute-standard-form-action))))) 
-                                     ps:false)))))))))
+                                     nil)))))))))
       (with-yaclml 
         (<:div :style "display:inline-block;" :id "ajax-upload-field"
                (<:input :type "file" :name (attributize-name (view-field-slot-name field)))))) 
